@@ -2,6 +2,8 @@
 
 Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn community. No scoring, no correct answers — see `/mnt/user-data/outputs/cranes-lift-challenge-handoff.md` (or wherever you're keeping the handoff doc) for the full spec this was built from.
 
+**Live:** https://cranes-lift-challenge-eta.vercel.app — deployed on Vercel, auto-deploys on push to `main`.
+
 ## Setup
 
 1. `npm install`
