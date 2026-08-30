@@ -1,4 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isAdminAuthenticated } from '@/lib/auth/is-admin';
+import { AdminEntryBar } from '@/components/AdminEntryBar';
 
 // Published challenges change over time (publish/unpublish toggle) — must
 // not be statically prerendered at build time.
@@ -6,15 +8,19 @@ export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const supabase = createAdminClient();
-  const { data: challenges } = await supabase
-    .from('challenges')
-    .select('challenge_number, slug, title, question, published_at')
-    .eq('status', 'published')
-    .order('challenge_number', { ascending: false });
+  const [{ data: challenges }, authenticated] = await Promise.all([
+    supabase
+      .from('challenges')
+      .select('challenge_number, slug, title, question, published_at')
+      .eq('status', 'published')
+      .order('challenge_number', { ascending: false }),
+    isAdminAuthenticated(),
+  ]);
 
   return (
     <main className="min-h-screen bg-paper px-4 py-10 md:py-16">
       <div className="max-w-xl mx-auto">
+        <AdminEntryBar authenticated={authenticated} />
         <span className="spec-label block mb-2">Cranes, Cranes, Cranes</span>
         <h1 className="font-display font-semibold text-4xl text-navy mb-8">
           The Lift Challenge

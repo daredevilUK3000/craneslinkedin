@@ -1,7 +1,9 @@
 import { createAdminClient } from '@/lib/supabase/admin';
+import { isAdminAuthenticated } from '@/lib/auth/is-admin';
 import { ScenarioCard } from '@/components/ScenarioCard';
 import { QuickTakePoll } from '@/components/QuickTakePoll';
 import { ShareButton } from '@/components/ShareButton';
+import { AdminEntryBar } from '@/components/AdminEntryBar';
 import { notFound } from 'next/navigation';
 
 // Static route with a query param (?slug=challenge-1) rather than a
@@ -46,10 +48,12 @@ export default async function ChallengeViewPage({
   const pollData = await pollRes.json();
 
   const challengeUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/challenge/view?slug=${slug}`;
+  const authenticated = await isAdminAuthenticated();
 
   return (
     <main className="min-h-screen bg-paper px-4 py-10 md:py-16">
       <div className="max-w-xl mx-auto">
+        <AdminEntryBar authenticated={authenticated} />
         <ScenarioCard
           challengeNumber={challenge.challenge_number}
           category={challenge.category}

@@ -26,6 +26,7 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 - The Friday-highlights framing ("editor curating good discussion, not an authority declaring winners") is now baked into both the generated LinkedIn post copy and a line on the challenge page itself, not just admin-side intent
 - "Copy Challenge Link" button on `/admin/generate` and `/admin/challenges` — the generated post text deliberately omits the app URL (outbound links suppress LinkedIn reach), so this is meant to go in as the first comment instead
 - Admin auth: a shared-password gate (`middleware.ts` + `/admin/login`) protects every `/admin/*` page and the mutating admin API routes; player-facing routes stay open
+- An "Admin" link + Log In/Log Out toggle now sits in the top-right corner of the homepage and the challenge view page (`AdminEntryBar`), so there's a way back into the admin area without typing a URL from memory
 - Player-facing challenge page: spec-plate scenario card, quick-take poll (aggregate bar chart, no correctness), optional free-text reasoning, share button
 - Homepage listing published challenges
 - API routes for generation, publishing, highlighting, comment-logging, recap drafting, engagement logging, response submission, and poll aggregation
