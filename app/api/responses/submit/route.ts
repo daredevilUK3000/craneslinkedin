@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { challenge_id, quick_take_id, free_text, display_name } = body;
+    const { challenge_id, quick_take_id, free_text, display_name, company } = body;
 
     if (!challenge_id) {
       return NextResponse.json({ error: 'challenge_id is required' }, { status: 400 });
@@ -18,12 +18,14 @@ export async function POST(req: NextRequest) {
 
     const supabase = createAdminClient();
 
-    // Anonymous by default. Only create a user row if a display name was given.
+    // Anonymous by default. Only create a user row if a name and/or company
+    // was given — both are optional and independent (display_name is
+    // nullable so a submitter can give just a company with no name).
     let userId: string | null = null;
-    if (display_name) {
+    if (display_name || company) {
       const { data: user, error: userErr } = await supabase
         .from('users')
-        .insert({ display_name })
+        .insert({ display_name: display_name || null, company: company || null })
         .select('id')
         .single();
       if (userErr) throw userErr;

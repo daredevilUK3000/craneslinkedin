@@ -54,13 +54,13 @@ export default async function AdminCuratePage({
     .order('created_at', { ascending: false });
 
   const userIds = [...new Set((responses ?? []).map((r) => r.user_id).filter(Boolean))] as string[];
-  const usersById = new Map<string, string>();
+  const usersById = new Map<string, { display_name: string | null; company: string | null }>();
   if (userIds.length) {
     const { data: users } = await supabase
       .from('users')
-      .select('id, display_name')
+      .select('id, display_name, company')
       .in('id', userIds);
-    for (const u of users ?? []) usersById.set(u.id, u.display_name);
+    for (const u of users ?? []) usersById.set(u.id, { display_name: u.display_name, company: u.company });
   }
 
   const quickTakeLabelById = new Map((quickTakes ?? []).map((qt) => [qt.id, qt.label]));
@@ -175,17 +175,22 @@ function ResponseRowCard({
   quickTakeLabelById,
 }: {
   r: ResponseRow;
-  usersById: Map<string, string>;
+  usersById: Map<string, { display_name: string | null; company: string | null }>;
   quickTakeLabelById: Map<string, string>;
 }) {
-  const name = r.user_id ? usersById.get(r.user_id) ?? 'Unknown' : 'Anonymous';
+  const user = r.user_id ? usersById.get(r.user_id) : null;
+  const name = user?.display_name || 'Anonymous';
+  const company = user?.company;
   const stance = r.quick_take_id ? quickTakeLabelById.get(r.quick_take_id) : null;
 
   return (
     <div className="flex items-start justify-between gap-4 border border-cable-grey/40 bg-white p-4">
       <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="spec-label">{name}</span>
+          <span className="spec-label">
+            {name}
+            {company && ` — ${company}`}
+          </span>
           <span className="spec-label text-cable-grey">
             {r.source === 'linkedin_comment' ? 'LinkedIn' : 'App'}
           </span>

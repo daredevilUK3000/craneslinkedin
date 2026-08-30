@@ -7,7 +7,7 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 ## Setup
 
 1. `npm install`
-2. Create a Supabase project. Run `supabase/migrations/001_init.sql` against it (SQL editor or CLI).
+2. Create a Supabase project. Run `supabase/migrations/001_init.sql`, then `002_add_company.sql`, against it (SQL editor or CLI) — in that order.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` — from your Supabase project settings.
    - `ANTHROPIC_API_KEY` — for the admin challenge generator.
@@ -27,6 +27,7 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 - "Copy Challenge Link" button on `/admin/generate` and `/admin/challenges` — the generated post text deliberately omits the app URL (outbound links suppress LinkedIn reach), so this is meant to go in as the first comment instead
 - Admin auth: a shared-password gate (`middleware.ts` + `/admin/login`) protects every `/admin/*` page and the mutating admin API routes; player-facing routes stay open
 - An "Admin" link + Log In/Log Out toggle now sits in the top-right corner of the homepage and the challenge view page (`AdminEntryBar`), so there's a way back into the admin area without typing a URL from memory
+- Optional "Your Name" / "Your Company" fields on the in-app quick-take submission form (previously fully anonymous with no way to opt in), plus a matching "Commenter Company" field on the admin's LinkedIn-comment logger — both flow through to `/admin/curate` (shown as "Name — Company") and into the recap generator, which credits the company by name in the drafted post when given (e.g. "Priya K. of Northline Rigging")
 - Player-facing challenge page: spec-plate scenario card, quick-take poll (aggregate bar chart, no correctness), optional free-text reasoning, share button
 - Homepage listing published challenges
 - API routes for generation, publishing, highlighting, comment-logging, recap drafting, engagement logging, response submission, and poll aggregation

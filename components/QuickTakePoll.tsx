@@ -28,6 +28,8 @@ export function QuickTakePoll({
   const [total, setTotal] = useState(initialTotal);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [freeText, setFreeText] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [company, setCompany] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +49,8 @@ export function QuickTakePoll({
           challenge_id: challengeId,
           quick_take_id: selectedId,
           free_text: freeText.trim() || null,
+          display_name: displayName.trim() || null,
+          company: company.trim() || null,
         }),
       });
       if (!res.ok) throw new Error('Submission failed');
@@ -90,6 +94,22 @@ export function QuickTakePoll({
             onChange={(e) => setFreeText(e.target.value)}
             placeholder="Add your take — or drop it as a comment on the LinkedIn post for the real discussion."
             className="w-full border border-cable-grey/40 p-3 text-sm font-body mb-4 min-h-[100px] focus:border-navy"
+          />
+
+          <span className="spec-label block mb-2">Your Name (optional)</span>
+          <input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="For credit if we highlight your take"
+            className="w-full border border-cable-grey/40 p-3 text-sm font-body mb-4 focus:border-navy"
+          />
+
+          <span className="spec-label block mb-2">Your Company (optional)</span>
+          <input
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="If you'd like it credited alongside your take"
+            className="w-full border border-cable-grey/40 p-3 text-sm font-body mb-4 focus:border-navy"
           />
 
           {error && <p className="text-warning-orange text-sm mb-3">{error}</p>}

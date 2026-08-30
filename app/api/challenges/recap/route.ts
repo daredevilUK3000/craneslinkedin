@@ -44,14 +44,14 @@ export async function POST(req: NextRequest) {
       ...new Set(responses.map((r) => r.quick_take_id).filter(Boolean)),
     ] as string[];
 
-    const usersById = new Map<string, string>();
+    const usersById = new Map<string, { display_name: string | null; company: string | null }>();
     if (userIds.length) {
       const { data: users, error: usersErr } = await supabase
         .from('users')
-        .select('id, display_name')
+        .select('id, display_name, company')
         .in('id', userIds);
       if (usersErr) throw usersErr;
-      for (const u of users ?? []) usersById.set(u.id, u.display_name);
+      for (const u of users ?? []) usersById.set(u.id, { display_name: u.display_name, company: u.company });
     }
 
     const quickTakesById = new Map<string, string>();
@@ -64,12 +64,16 @@ export async function POST(req: NextRequest) {
       for (const qt of quickTakes ?? []) quickTakesById.set(qt.id, qt.label);
     }
 
-    const highlights: RecapHighlight[] = responses.map((r) => ({
-      displayName: r.user_id ? usersById.get(r.user_id) ?? null : null,
-      quickTakeLabel: r.quick_take_id ? quickTakesById.get(r.quick_take_id) ?? null : null,
-      freeText: r.free_text,
-      source: r.source as 'app' | 'linkedin_comment',
-    }));
+    const highlights: RecapHighlight[] = responses.map((r) => {
+      const user = r.user_id ? usersById.get(r.user_id) : null;
+      return {
+        displayName: user?.display_name ?? null,
+        company: user?.company ?? null,
+        quickTakeLabel: r.quick_take_id ? quickTakesById.get(r.quick_take_id) ?? null : null,
+        freeText: r.free_text,
+        source: r.source as 'app' | 'linkedin_comment',
+      };
+    });
 
     const recap = await generateRecap({
       challengeTitle: challenge.title,

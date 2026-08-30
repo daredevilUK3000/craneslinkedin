@@ -12,6 +12,7 @@ export function LogLinkedInCommentForm({
 }) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
+  const [company, setCompany] = useState('');
   const [freeText, setFreeText] = useState('');
   const [quickTakeId, setQuickTakeId] = useState('');
   const [highlighted, setHighlighted] = useState(true);
@@ -29,6 +30,7 @@ export function LogLinkedInCommentForm({
         body: JSON.stringify({
           challenge_id: challengeId,
           display_name: displayName.trim() || null,
+          company: company.trim() || null,
           free_text: freeText.trim() || null,
           quick_take_id: quickTakeId || null,
           highlighted,
@@ -37,6 +39,7 @@ export function LogLinkedInCommentForm({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed to log comment');
       setDisplayName('');
+      setCompany('');
       setFreeText('');
       setQuickTakeId('');
       setHighlighted(true);
@@ -59,6 +62,14 @@ export function LogLinkedInCommentForm({
         value={displayName}
         onChange={(e) => setDisplayName(e.target.value)}
         placeholder="e.g. Jordan P."
+        className="w-full border border-cable-grey/40 p-2.5 mb-3 font-body text-sm"
+      />
+
+      <label className="spec-label block mb-1">Commenter Company (optional)</label>
+      <input
+        value={company}
+        onChange={(e) => setCompany(e.target.value)}
+        placeholder="e.g. Acme Cranes Ltd"
         className="w-full border border-cable-grey/40 p-2.5 mb-3 font-body text-sm"
       />
 

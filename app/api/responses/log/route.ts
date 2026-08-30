@@ -10,7 +10,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { challenge_id, display_name, free_text, quick_take_id, highlighted } = body;
+    const { challenge_id, display_name, company, free_text, quick_take_id, highlighted } = body;
 
     if (!challenge_id) {
       return NextResponse.json({ error: 'challenge_id is required' }, { status: 400 });
@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
     const supabase = createAdminClient();
 
     let userId: string | null = null;
-    if (display_name) {
+    if (display_name || company) {
       const { data: user, error: userErr } = await supabase
         .from('users')
-        .insert({ display_name })
+        .insert({ display_name: display_name || null, company: company || null })
         .select('id')
         .single();
       if (userErr) throw userErr;
