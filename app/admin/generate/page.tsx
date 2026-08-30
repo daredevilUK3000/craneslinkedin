@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { PublishToggleButton } from '@/components/PublishToggleButton';
 import { LogoutButton } from '@/components/LogoutButton';
+import { CopyChallengeLinkButton } from '@/components/CopyChallengeLinkButton';
 
 const FORMATS = [
   { value: 'open_judgment', label: 'Open-Judgment' },
@@ -133,8 +134,16 @@ export default function AdminGeneratePage() {
             <pre className="whitespace-pre-wrap font-body text-sm bg-paper p-4 border border-cable-grey/30">
               {result.challenge.linkedin_post_draft}
             </pre>
+            <p className="text-xs text-cable-grey font-body mt-2">
+              This draft leaves the link out on purpose — LinkedIn suppresses reach on posts with
+              outbound links. Post the text as-is, then drop the challenge link below as the{' '}
+              <strong>first comment</strong>.
+            </p>
 
-            <p className="text-xs text-cable-grey font-body mt-4">Slug: {result.challenge.slug}</p>
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-xs text-cable-grey font-body">Slug: {result.challenge.slug}</p>
+              <CopyChallengeLinkButton slug={result.challenge.slug} />
+            </div>
           </div>
         )}
       </div>

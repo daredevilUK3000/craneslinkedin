@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { PublishToggleButton } from '@/components/PublishToggleButton';
 import { LogoutButton } from '@/components/LogoutButton';
+import { CopyChallengeLinkButton } from '@/components/CopyChallengeLinkButton';
 
 // Admin's challenge list — every status, not just published. Lets the admin
 // flip status between 'draft' and 'published' without touching Supabase
@@ -68,12 +69,15 @@ export default async function AdminChallengesPage() {
                 <p className="font-display font-medium text-lg text-navy truncate">{c.title}</p>
                 <div className="flex items-center gap-3">
                   {c.status === 'published' && (
-                    <a
-                      href={`/challenge/view?slug=${c.slug}`}
-                      className="text-xs font-mono text-cable-grey underline"
-                    >
-                      /challenge/view?slug={c.slug}
-                    </a>
+                    <>
+                      <a
+                        href={`/challenge/view?slug=${c.slug}`}
+                        className="text-xs font-mono text-cable-grey underline"
+                      >
+                        /challenge/view?slug={c.slug}
+                      </a>
+                      <CopyChallengeLinkButton slug={c.slug} />
+                    </>
                   )}
                   <a
                     href={`/admin/curate?slug=${c.slug}`}
