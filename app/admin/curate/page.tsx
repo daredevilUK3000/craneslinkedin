@@ -1,0 +1,157 @@
+import { createAdminClient } from '@/lib/supabase/admin';
+import { notFound } from 'next/navigation';
+import { ResponseHighlightToggle } from '@/components/ResponseHighlightToggle';
+import { LogLinkedInCommentForm } from '@/components/LogLinkedInCommentForm';
+import { RecapGenerator } from '@/components/RecapGenerator';
+import { LogoutButton } from '@/components/LogoutButton';
+
+// Static route with a query param (?slug=challenge-1), matching the
+// portfolio's Windows Git convention — see app/challenge/view/page.tsx.
+// force-dynamic for the same reason as the other admin pages: this must
+// reflect highlight toggles and newly logged comments immediately.
+export const dynamic = 'force-dynamic';
+
+interface ResponseRow {
+  id: string;
+  user_id: string | null;
+  quick_take_id: string | null;
+  free_text: string | null;
+  source: string;
+  highlighted: boolean;
+  created_at: string;
+}
+
+export default async function AdminCuratePage({
+  searchParams,
+}: {
+  searchParams: { slug?: string };
+}) {
+  const slug = searchParams.slug;
+  if (!slug) notFound();
+
+  const supabase = createAdminClient();
+
+  // Sequential queries, no joins — per this portfolio's Supabase pattern.
+  const { data: challenge } = await supabase
+    .from('challenges')
+    .select('id, challenge_number, title, question')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (!challenge) notFound();
+
+  const { data: quickTakes } = await supabase
+    .from('quick_takes')
+    .select('id, label')
+    .eq('challenge_id', challenge.id)
+    .order('sort_order', { ascending: true });
+
+  const { data: responses } = await supabase
+    .from('responses')
+    .select('id, user_id, quick_take_id, free_text, source, highlighted, created_at')
+    .eq('challenge_id', challenge.id)
+    .order('created_at', { ascending: false });
+
+  const userIds = [...new Set((responses ?? []).map((r) => r.user_id).filter(Boolean))] as string[];
+  const usersById = new Map<string, string>();
+  if (userIds.length) {
+    const { data: users } = await supabase
+      .from('users')
+      .select('id, display_name')
+      .in('id', userIds);
+    for (const u of users ?? []) usersById.set(u.id, u.display_name);
+  }
+
+  const quickTakeLabelById = new Map((quickTakes ?? []).map((qt) => [qt.id, qt.label]));
+
+  const highlighted = (responses ?? []).filter((r) => r.highlighted);
+  const rest = (responses ?? []).filter((r) => !r.highlighted);
+
+  return (
+    <main className="min-h-screen bg-paper px-4 py-10">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-baseline justify-between mb-2 gap-4">
+          <div className="min-w-0">
+            <span className="spec-label block mb-2">Admin — Curate · No. {challenge.challenge_number}</span>
+            <h1 className="font-display font-semibold text-2xl text-navy">{challenge.title}</h1>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <a
+              href="/admin/challenges"
+              className="border border-navy text-navy font-display font-medium tracking-wide px-4 py-2 text-xs uppercase hover:bg-navy hover:text-white transition-colors"
+            >
+              All Challenges
+            </a>
+            <LogoutButton />
+          </div>
+        </div>
+        <p className="font-body text-sm text-cable-grey mb-8">{challenge.question}</p>
+
+        <span className="spec-label block mb-3">Highlighted ({highlighted.length})</span>
+        <div className="space-y-3 mb-8">
+          {highlighted.length === 0 && (
+            <p className="text-cable-grey font-body text-sm">None yet.</p>
+          )}
+          {highlighted.map((r) => (
+            <ResponseRowCard
+              key={r.id}
+              r={r}
+              usersById={usersById}
+              quickTakeLabelById={quickTakeLabelById}
+            />
+          ))}
+        </div>
+
+        <span className="spec-label block mb-3">All Responses ({rest.length})</span>
+        <div className="space-y-3 mb-8">
+          {rest.length === 0 && (
+            <p className="text-cable-grey font-body text-sm">No other responses.</p>
+          )}
+          {rest.map((r) => (
+            <ResponseRowCard
+              key={r.id}
+              r={r}
+              usersById={usersById}
+              quickTakeLabelById={quickTakeLabelById}
+            />
+          ))}
+        </div>
+
+        <div className="mb-8">
+          <LogLinkedInCommentForm challengeId={challenge.id} quickTakes={quickTakes ?? []} />
+        </div>
+
+        <RecapGenerator challengeId={challenge.id} />
+      </div>
+    </main>
+  );
+}
+
+function ResponseRowCard({
+  r,
+  usersById,
+  quickTakeLabelById,
+}: {
+  r: ResponseRow;
+  usersById: Map<string, string>;
+  quickTakeLabelById: Map<string, string>;
+}) {
+  const name = r.user_id ? usersById.get(r.user_id) ?? 'Unknown' : 'Anonymous';
+  const stance = r.quick_take_id ? quickTakeLabelById.get(r.quick_take_id) : null;
+
+  return (
+    <div className="flex items-start justify-between gap-4 border border-cable-grey/40 bg-white p-4">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="spec-label">{name}</span>
+          <span className="spec-label text-cable-grey">
+            {r.source === 'linkedin_comment' ? 'LinkedIn' : 'App'}
+          </span>
+        </div>
+        {stance && <p className="font-body text-sm text-navy font-medium mb-1">{stance}</p>}
+        {r.free_text && <p className="font-body text-sm text-navy">{r.free_text}</p>}
+      </div>
+      <ResponseHighlightToggle responseId={r.id} highlighted={r.highlighted} />
+    </div>
+  );
+}

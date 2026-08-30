@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #ECEEE8;
+  color: #101820;
+}
+
+/* Signature element: the scenario is framed like a rigging inspection tag /
+   load-chart spec plate — corner brackets + a rivet dot at each corner.
+   This is the one bold move on the page; everything else stays quiet. */
+.spec-plate {
+  position: relative;
+  border: 1px solid #101820;
+  background: #ffffff;
+  padding: 2rem;
+}
+
+.spec-plate::before,
+.spec-plate::after,
+.spec-plate .corner-tl,
+.spec-plate .corner-br {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: #101820;
+}
+
+.spec-plate::before {
+  top: 10px;
+  left: 10px;
+}
+.spec-plate::after {
+  bottom: 10px;
+  right: 10px;
+}
+.spec-plate .corner-tl {
+  top: 10px;
+  right: 10px;
+}
+.spec-plate .corner-br {
+  bottom: 10px;
+  left: 10px;
+}
+
+.spec-label {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8B95A1;
+}
+
+/* Poll bar — fills like a load gauge. Respects reduced motion. */
+.poll-bar-fill {
+  transition: width 500ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .poll-bar-fill {
+    transition: none;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid #F5B700;
+  outline-offset: 2px;
+}
