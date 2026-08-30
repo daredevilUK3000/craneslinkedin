@@ -7,7 +7,7 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 ## Setup
 
 1. `npm install`
-2. Create a Supabase project. Run `supabase/migrations/001_init.sql`, then `002_add_company.sql`, against it (SQL editor or CLI) — in that order.
+2. Create a Supabase project. Run the migrations in `supabase/migrations/` against it in order (001, 002, 003) via the SQL editor or CLI.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` — from your Supabase project settings.
    - `ANTHROPIC_API_KEY` — for the admin challenge generator.
@@ -31,6 +31,7 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 - Player-facing challenge page: spec-plate scenario card, quick-take poll (aggregate bar chart, no correctness), optional free-text reasoning, share button
 - Homepage listing published challenges
 - API routes for generation, publishing, highlighting, comment-logging, recap drafting, engagement logging, response submission, and poll aggregation
+- Live per-challenge response counts on `/admin/challenges`, plus a small safety-yellow "N new" pill next to the "All Challenges" link on `/admin/generate` and `/admin/curate` — so the admin doesn't have to remember to go check for new responses. Opening `/admin/challenges` marks them checked and resets the count. Single global `admin_activity.last_checked_responses_at` timestamp (migration 003) — fine for one admin; would need to become per-user if multi-admin auth is ever added.
 
 **Not yet built (flagged in the handoff doc as fast-follows, not MVP blockers):**
 - Badge-awarding logic (the four seeded badges are participation/recognition-based; awarding them is a manual admin action for now per the handoff doc's Section 7 — LinkedIn comment ingestion is explicitly out of MVP scope)

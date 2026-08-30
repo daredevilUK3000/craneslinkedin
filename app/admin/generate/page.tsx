@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PublishToggleButton } from '@/components/PublishToggleButton';
 import { LogoutButton } from '@/components/LogoutButton';
 import { CopyChallengeLinkButton } from '@/components/CopyChallengeLinkButton';
+import { AdminNewResponsesBadge } from '@/components/AdminNewResponsesBadge';
 
 const FORMATS = [
   { value: 'open_judgment', label: 'Open-Judgment' },
@@ -52,9 +53,10 @@ export default function AdminGeneratePage() {
           <div className="flex items-center gap-4">
             <a
               href="/admin/challenges"
-              className="border border-navy text-navy font-display font-medium tracking-wide px-4 py-2 text-xs uppercase hover:bg-navy hover:text-white transition-colors"
+              className="flex items-center gap-2 border border-navy text-navy font-display font-medium tracking-wide px-4 py-2 text-xs uppercase hover:bg-navy hover:text-white transition-colors"
             >
               All Challenges
+              <AdminNewResponsesBadge />
             </a>
             <LogoutButton />
           </div>

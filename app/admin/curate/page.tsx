@@ -5,6 +5,7 @@ import { LogLinkedInCommentForm } from '@/components/LogLinkedInCommentForm';
 import { RecapGenerator } from '@/components/RecapGenerator';
 import { EngagementSnapshotForm } from '@/components/EngagementSnapshotForm';
 import { LogoutButton } from '@/components/LogoutButton';
+import { AdminNewResponsesBadge } from '@/components/AdminNewResponsesBadge';
 
 // Static route with a query param (?slug=challenge-1), matching the
 // portfolio's Windows Git convention — see app/challenge/view/page.tsx.
@@ -85,9 +86,10 @@ export default async function AdminCuratePage({
           <div className="flex items-center gap-4 shrink-0">
             <a
               href="/admin/challenges"
-              className="border border-navy text-navy font-display font-medium tracking-wide px-4 py-2 text-xs uppercase hover:bg-navy hover:text-white transition-colors"
+              className="flex items-center gap-2 border border-navy text-navy font-display font-medium tracking-wide px-4 py-2 text-xs uppercase hover:bg-navy hover:text-white transition-colors"
             >
               All Challenges
+              <AdminNewResponsesBadge />
             </a>
             <LogoutButton />
           </div>

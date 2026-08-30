@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ADMIN_SESSION_COOKIE, verifySessionToken } from '@/lib/auth/admin-session';
 
 // Gates every /admin/* page plus the mutating admin API routes (generate,
-// publish, recap, highlight, log-comment, engagement) behind a signed
-// session cookie.
+// publish, recap, highlight, log-comment, engagement, responses-since,
+// mark-checked) behind a signed session cookie.
 // Player-facing routes (/, /challenge/view, /api/poll,
 // /api/responses/submit) are untouched — this app stays anonymous-by-default
 // for players; only the admin surface needs a login.
@@ -39,5 +39,7 @@ export const config = {
     '/api/challenges/engagement',
     '/api/responses/highlight',
     '/api/responses/log',
+    '/api/admin/responses-since',
+    '/api/admin/mark-checked',
   ],
 };

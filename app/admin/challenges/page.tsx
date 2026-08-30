@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { PublishToggleButton } from '@/components/PublishToggleButton';
 import { LogoutButton } from '@/components/LogoutButton';
 import { CopyChallengeLinkButton } from '@/components/CopyChallengeLinkButton';
+import { MarkResponsesChecked } from '@/components/MarkResponsesChecked';
 
 // Admin's challenge list — every status, not just published. Lets the admin
 // flip status between 'draft' and 'published' without touching Supabase
@@ -23,8 +24,18 @@ export default async function AdminChallengesPage() {
     .select('id, challenge_number, slug, title, format, category, status, published_at')
     .order('challenge_number', { ascending: false });
 
+  // Sequential queries, no joins — per this portfolio's Supabase pattern.
+  // Response counts are computed in application code rather than a
+  // grouped/joined query.
+  const { data: allResponses } = await supabase.from('responses').select('challenge_id');
+  const responseCountByChallenge = new Map<string, number>();
+  for (const r of allResponses ?? []) {
+    responseCountByChallenge.set(r.challenge_id, (responseCountByChallenge.get(r.challenge_id) ?? 0) + 1);
+  }
+
   return (
     <main className="min-h-screen bg-paper px-4 py-10">
+      <MarkResponsesChecked />
       <div className="max-w-3xl mx-auto">
         <div className="flex items-baseline justify-between mb-8">
           <div>
@@ -65,6 +76,10 @@ export default async function AdminChallengesPage() {
                     {c.status}
                   </span>
                   {c.category && <span className="spec-label">{c.category}</span>}
+                  <span className="spec-label">
+                    {responseCountByChallenge.get(c.id) ?? 0} response
+                    {(responseCountByChallenge.get(c.id) ?? 0) === 1 ? '' : 's'}
+                  </span>
                 </div>
                 <p className="font-display font-medium text-lg text-navy truncate">{c.title}</p>
                 <div className="flex items-center gap-3">
