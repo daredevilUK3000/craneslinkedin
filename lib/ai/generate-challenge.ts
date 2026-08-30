@@ -32,6 +32,7 @@ CRITICAL RULES — read carefully:
 - Do not write quick-take options where one is obviously "the right one" and the rest are distractors. All options should be genuinely plausible professional positions.
 - Keep the scenario realistic and specific (real-sounding tonnages, radii, site conditions) but do not assert that any single response to it is objectively correct — you are not a substitute for a qualified lift planner and must not imply otherwise.
 - Tone: direct, professional, respectful of the audience's expertise. Not gamified or cutesy language ("Certified," "Master," "Win" are all off-limits in copy).
+- The post must tell readers that later this week you'll highlight a few responses that stood out or sparked real debate — frame this explicitly as an editor curating good discussion, never as an authority declaring winners, correct answers, or a "best answer."
 - Output ONLY valid JSON matching the schema below. No markdown fences, no preamble, no commentary.
 
 Schema:
@@ -40,7 +41,7 @@ Schema:
   "scenario": string (2-4 sentences, concrete details),
   "question": string (the open judgement question),
   "quick_takes": string[] (3-6 short stance labels, each under 8 words, no option implied as correct),
-  "linkedin_post_draft": string (ready-to-post copy including the scenario, question, a line inviting comments, a placeholder "[group link]", and 3-5 relevant hashtags)
+  "linkedin_post_draft": string (ready-to-post copy including the scenario, question, a line inviting comments, a line previewing the Friday highlights per the rule above, a placeholder "[group link]", and 3-5 relevant hashtags — do NOT include an actual URL to the challenge page; that gets posted separately as a comment)
 }`;
 
 export async function generateChallenge(params: {

@@ -32,6 +32,10 @@ export function ScenarioCard({
       <p className="text-xs text-cable-grey font-body border-t border-cable-grey/30 pt-4 mt-8">
         {disclaimer}
       </p>
+      <p className="text-xs text-cable-grey font-body mt-2">
+        Later this week, we&apos;ll highlight a few responses that stood out or sparked real
+        debate — editorial picks, not a scoreboard.
+      </p>
     </div>
   );
 }

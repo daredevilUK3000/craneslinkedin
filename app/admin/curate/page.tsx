@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { ResponseHighlightToggle } from '@/components/ResponseHighlightToggle';
 import { LogLinkedInCommentForm } from '@/components/LogLinkedInCommentForm';
 import { RecapGenerator } from '@/components/RecapGenerator';
+import { EngagementSnapshotForm } from '@/components/EngagementSnapshotForm';
 import { LogoutButton } from '@/components/LogoutButton';
 
 // Static route with a query param (?slug=challenge-1), matching the
@@ -67,6 +68,12 @@ export default async function AdminCuratePage({
   const highlighted = (responses ?? []).filter((r) => r.highlighted);
   const rest = (responses ?? []).filter((r) => !r.highlighted);
 
+  const { data: engagementSnapshots } = await supabase
+    .from('engagement_snapshots')
+    .select('id, snapshot_date, impressions, reactions, comments, unique_commenters, group_joins, notes')
+    .eq('challenge_id', challenge.id)
+    .order('snapshot_date', { ascending: false });
+
   return (
     <main className="min-h-screen bg-paper px-4 py-10">
       <div className="max-w-2xl mx-auto">
@@ -121,7 +128,42 @@ export default async function AdminCuratePage({
           <LogLinkedInCommentForm challengeId={challenge.id} quickTakes={quickTakes ?? []} />
         </div>
 
-        <RecapGenerator challengeId={challenge.id} />
+        <div className="mb-8">
+          <RecapGenerator challengeId={challenge.id} />
+        </div>
+
+        <span className="spec-label block mb-3">Engagement</span>
+        {engagementSnapshots && engagementSnapshots.length > 0 && (
+          <div className="overflow-x-auto mb-4 border border-cable-grey/40 bg-white">
+            <table className="w-full text-sm font-body">
+              <thead>
+                <tr className="border-b border-cable-grey/30 text-left">
+                  <th className="p-2 spec-label">Date</th>
+                  <th className="p-2 spec-label">Impr.</th>
+                  <th className="p-2 spec-label">React.</th>
+                  <th className="p-2 spec-label">Comments</th>
+                  <th className="p-2 spec-label">Uniq.</th>
+                  <th className="p-2 spec-label">Joins</th>
+                  <th className="p-2 spec-label">Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {engagementSnapshots.map((s) => (
+                  <tr key={s.id} className="border-b border-cable-grey/20 last:border-0">
+                    <td className="p-2 text-navy whitespace-nowrap">{s.snapshot_date}</td>
+                    <td className="p-2 text-navy">{s.impressions ?? '—'}</td>
+                    <td className="p-2 text-navy">{s.reactions ?? '—'}</td>
+                    <td className="p-2 text-navy">{s.comments ?? '—'}</td>
+                    <td className="p-2 text-navy">{s.unique_commenters ?? '—'}</td>
+                    <td className="p-2 text-navy">{s.group_joins ?? '—'}</td>
+                    <td className="p-2 text-cable-grey">{s.notes ?? ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <EngagementSnapshotForm challengeId={challenge.id} />
       </div>
     </main>
   );

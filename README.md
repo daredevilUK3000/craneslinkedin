@@ -22,10 +22,13 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 - Admin generation flow: `/admin/generate` → AI drafts a challenge (title, scenario, question, quick-takes, LinkedIn post copy) as a **draft** — nothing publishes automatically
 - Publish/unpublish toggle: on the generate page's result panel, and on `/admin/challenges` (lists every challenge regardless of status) — both call `/api/challenges/publish`
 - Mid-week highlight-curation: `/admin/curate?slug=...` lists every response for a challenge, lets the admin toggle `highlighted`, manually log a standout LinkedIn comment (comment ingestion itself is intentionally not automated), and generate a highlights recap post draft that only quotes what's actually been highlighted
+- Engagement tracking: same page also has a manual log for `engagement_snapshots` (impressions, reactions, comments, unique commenters, group joins, notes) — LinkedIn doesn't expose these to a non-partner app, so it's a check-in log, not a scrape
+- The Friday-highlights framing ("editor curating good discussion, not an authority declaring winners") is now baked into both the generated LinkedIn post copy and a line on the challenge page itself, not just admin-side intent
+- "Copy Challenge Link" button on `/admin/generate` and `/admin/challenges` — the generated post text deliberately omits the app URL (outbound links suppress LinkedIn reach), so this is meant to go in as the first comment instead
 - Admin auth: a shared-password gate (`middleware.ts` + `/admin/login`) protects every `/admin/*` page and the mutating admin API routes; player-facing routes stay open
 - Player-facing challenge page: spec-plate scenario card, quick-take poll (aggregate bar chart, no correctness), optional free-text reasoning, share button
 - Homepage listing published challenges
-- API routes for generation, publishing, highlighting, comment-logging, recap drafting, response submission, and poll aggregation
+- API routes for generation, publishing, highlighting, comment-logging, recap drafting, engagement logging, response submission, and poll aggregation
 
 **Not yet built (flagged in the handoff doc as fast-follows, not MVP blockers):**
 - Badge-awarding logic (the four seeded badges are participation/recognition-based; awarding them is a manual admin action for now per the handoff doc's Section 7 — LinkedIn comment ingestion is explicitly out of MVP scope)
