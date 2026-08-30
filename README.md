@@ -40,6 +40,8 @@ Discussion-first weekly challenge app for the "Cranes, Cranes, Cranes" LinkedIn 
 
 Visual identity follows a rigging-inspection-tag / load-chart aesthetic (the "spec plate" scenario card with corner brackets and rivet-dot corners) rather than a generic template look — see `app/globals.css` for the signature treatment, and `tailwind.config.ts` for the color/type tokens (Oswald display, IBM Plex Sans body, IBM Plex Mono for data labels).
 
+`components/CraneMasthead.tsx` is a deliberate design choice, not scaffold noise: a full video/photo hero behind the challenge card was considered and rejected (load-time risk in a LinkedIn in-app browser, fights the mobile-first requirement, competes with the spec-plate for attention). It's a dark steel band with an inline-SVG line-art tower-crane silhouette instead — pure CSS/SVG, nothing to buffer, nothing animated so no `prefers-reduced-motion` handling needed. It sits above the card on both the homepage and the challenge view page — keep it on every player-facing page.
+
 ## Known gotchas carried over from this portfolio's other Next.js/Supabase projects
 
 - All server-side queries use `createAdminClient()` with **sequential queries, not joins** — joins silently return empty with the custom-JWT-hook-disabled RLS setup used across this portfolio.

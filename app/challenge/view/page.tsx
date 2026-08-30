@@ -4,6 +4,7 @@ import { ScenarioCard } from '@/components/ScenarioCard';
 import { QuickTakePoll } from '@/components/QuickTakePoll';
 import { ShareButton } from '@/components/ShareButton';
 import { AdminEntryBar } from '@/components/AdminEntryBar';
+import { CraneMasthead } from '@/components/CraneMasthead';
 import { notFound } from 'next/navigation';
 
 // Static route with a query param (?slug=challenge-1) rather than a
@@ -51,25 +52,28 @@ export default async function ChallengeViewPage({
   const authenticated = await isAdminAuthenticated();
 
   return (
-    <main className="min-h-screen bg-paper px-4 py-10 md:py-16">
-      <div className="max-w-xl mx-auto">
-        <AdminEntryBar authenticated={authenticated} />
-        <ScenarioCard
-          challengeNumber={challenge.challenge_number}
-          category={challenge.category}
-          scenario={challenge.scenario}
-          question={challenge.question}
-          disclaimer={challenge.disclaimer}
-        />
+    <main className="min-h-screen bg-paper">
+      <CraneMasthead />
+      <div className="px-4 py-10 md:py-16">
+        <div className="max-w-xl mx-auto">
+          <AdminEntryBar authenticated={authenticated} />
+          <ScenarioCard
+            challengeNumber={challenge.challenge_number}
+            category={challenge.category}
+            scenario={challenge.scenario}
+            question={challenge.question}
+            disclaimer={challenge.disclaimer}
+          />
 
-        <QuickTakePoll
-          challengeId={challenge.id}
-          quickTakes={quickTakes ?? []}
-          initialPoll={pollData.poll ?? []}
-          initialTotal={pollData.total ?? 0}
-        />
+          <QuickTakePoll
+            challengeId={challenge.id}
+            quickTakes={quickTakes ?? []}
+            initialPoll={pollData.poll ?? []}
+            initialTotal={pollData.total ?? 0}
+          />
 
-        <ShareButton challengeUrl={challengeUrl} title={challenge.title} />
+          <ShareButton challengeUrl={challengeUrl} title={challenge.title} />
+        </div>
       </div>
     </main>
   );
